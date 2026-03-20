@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIAGEN</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/latest/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --apple-bg: #f5f5f7;
+            --apple-text: #1d1d1f;
+            --apple-blue: #0066cc;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+        }
+
+        body {
+            background-color: var(--apple-bg);
+            color: var(--apple-text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.022em;
+        }
+
+        /* Hero elegante com tipografia fina */
+        .hero-section {
+            padding: 100px 0 60px;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-weight: 700;
+            font-size: 3.5rem;
+            letter-spacing: -0.05em;
+            background: linear-gradient(180deg, #1d1d1f 0%, #434344 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-section p {
+            font-weight: 400;
+            color: #86868b;
+            font-size: 1.5rem;
+        }
+
+        /* Card estilo macOS Glassmorphism */
+        .mgmt-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 28px;
+            padding: 40px;
+            height: 100%;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .mgmt-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .card-category {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--apple-blue);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .card-title-mgmt {
+            font-weight: 600;
+            font-size: 1.75rem;
+            margin-bottom: 20px;
+        }
+
+        /* Botão Apple Style */
+        .btn-apple {
+            background-color: var(--apple-text);
+            color: white;
+            border-radius: 50px;
+            padding: 12px 28px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border: none;
+            transition: opacity 0.3s;
+        }
+
+        .btn-apple:hover {
+            opacity: 0.8;
+            color: white;
+        }
+
+        footer {
+            padding: 50px;
+            font-size: 0.85rem;
+            color: #86868b;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="hero-section">
+            <h1>IA Generativa nos Negócios</h1>
+            <p>Estratégia, Implementação e Gestão de Futuro.</p>
+        </header>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-5">
+                <div class="card mgmt-card">
+                    <div class="card-body p-0">
+                        <span class="card-category">Módulo Estratégico</span>
+                        <h3 class="card-title-mgmt">Implemente a IA na sua Empresa</h3>
+                        <p class="text-muted mb-4">Guia executivo sobre como integrar modelos de linguagem e automação no fluxo operacional corporativo.</p>
+                        <a href="modulo1.html" class="btn btn-apple">Iniciar Apresentação</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="card mgmt-card">
+                    <div class="card-body p-0">
+                        <span class="card-category">Módulo de Ferramentas</span>
+                        <h3 class="card-title-mgmt">Ecossistema de Produtividade</h3>
+                        <p class="text-muted mb-4">Análise comparativa das principais ferramentas de IA para marketing, RH e análise de dados.</p>
+                        <a href="tema2.html" class="btn btn-apple">Explorar Slides</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 Bruno Ferreira | Instrutor de Formacão Profissional
+    </footer>
+
+</body>
+</html>

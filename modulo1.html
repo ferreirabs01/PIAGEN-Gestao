@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo Estratégico - Gestão & IA</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/latest/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --apple-bg: #f5f5f7;
+            --apple-text: #1d1d1f;
+            --apple-blue: #0066cc;
+            --apple-gray: #86868b;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+        }
+
+        body {
+            background-color: var(--apple-bg);
+            color: var(--apple-text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.022em;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar Estilo macOS com Glassmorphism */
+        .navbar-apple {
+            padding: 12px 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* Botão Voltar Refinado */
+        .btn-back-apple {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            border-radius: 8px;
+            color: var(--apple-text);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-back-apple:hover {
+            background: rgba(0, 0, 0, 0.08);
+            color: var(--apple-blue);
+            transform: translateX(-2px);
+        }
+
+        .btn-back-apple svg {
+            width: 14px;
+            height: 14px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Conteúdo Principal */
+        .module-header {
+            margin-top: 80px;
+            margin-bottom: 60px;
+        }
+
+        .breadcrumb-apple {
+            font-size: 0.8rem;
+            color: var(--apple-gray);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .module-header h1 {
+            font-weight: 700;
+            font-size: 3rem;
+            letter-spacing: -0.04em;
+            margin-bottom: 10px;
+        }
+
+        /* Lesson Cards */
+        .lesson-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 35px;
+            border: none;
+            transition: all 0.5s cubic-bezier(0.15, 0, 0.5, 1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+        }
+
+        /* Badges Minimalistas */
+        .badge-apple {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .badge-intro { background: #e1f0ff; color: #0066cc; }
+        .badge-strategy { background: #f3e5f5; color: #7b1fa2; }
+        .badge-data { background: #e8f5e9; color: #2e7d32; }
+
+        .lesson-title {
+            font-weight: 600;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--apple-text);
+        }
+
+        .lesson-desc {
+            font-size: 1rem;
+            color: var(--apple-gray);
+            line-height: 1.5;
+            margin-bottom: 30px;
+            flex-grow: 1;
+        }
+
+        /* Link Estilo Apple */
+        .btn-lesson {
+            color: var(--apple-blue);
+            font-weight: 500;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.95rem;
+        }
+
+        .btn-lesson span {
+            transition: transform 0.2s ease;
+        }
+
+        .btn-lesson:hover span {
+            transform: translateX(5px);
+        }
+
+        footer {
+            margin-top: 120px;
+            padding: 40px 0;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            color: var(--apple-gray);
+            font-size: 0.8rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar-apple">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="index.html" class="btn-back-apple">
+                <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
+                Início
+            </a>
+            <span style="font-size: 0.85rem; font-weight: 500; color: var(--apple-gray);">
+                PROGRAMA EXECUTIVO 2026
+            </span>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="module-header text-center">
+            <div class="breadcrumb-apple">Módulo 01</div>
+            <h1>Estratégia & Mercado</h1>
+            <p class="lead text-muted mx-auto" style="max-width: 600px;">
+                Entenda o panorama global e as métricas de sucesso para a implementação de IA em organizações.
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            
+            <div class="col-md-6 col-lg-5">
+                <div class="lesson-card">
+                    <div>
+                        <span class="badge-apple badge-intro">Disponível</span>
+                        <h3 class="lesson-title">Implemente a IA na sua Empresa</h3>
+                        <p class="lesson-desc">
+                            Uma análise profunda sobre o comportamento das PMEs brasileiras e o caminho para a digitalização inteligente.
+                        </p>
+                    </div>
+                    <a href="tema1.html" class="btn-lesson">
+                        Acessar Slides <span>→</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-5">
+                <div class="lesson-card" style="opacity: 0.7;">
+                    <div>
+                        <span class="badge-apple badge-data">Novo</span>
+                        <h3 class="lesson-title">O Cenário Atual da IA</h3>
+                        <p class="lesson-desc">
+                            Análise de tendências, investimentos (R$ 47 bi no setor bancário) e o framework de ROI do BCG.
+                        </p>
+                    </div>
+                    <a href="tema2.html" class="btn-lesson">
+                        Acessar Slides <span>→</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        Bruno Ferreira • 2026
+    </footer>
+
+</body>
+</html>
