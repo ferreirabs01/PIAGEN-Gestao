@@ -244,6 +244,7 @@
                 <img src="image_0.png" alt="Stylized Cheshire Cat illustration" class="alice-image" style="width: 30%; top: 10%; left: -10%; transform: rotate(-15deg);">
                 <img src="image_1.png" alt="Stylized Cheshire Cat smile" class="alice-image" style="width: 20%; bottom: 5%; right: -5%; transform: rotate(10deg);">
                 <img src="image_6.png" alt="Alice in Wonderland stylized background element" class="alice-image" style="width: 25%; top: 40%; right: 5%; transform: rotate(-5deg); opacity: 0.1;">
+                <img src="image_2.png" alt="Alice at the crossroads" class="alice-image" style="width: 40%; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: blur(0) grayscale(0); z-index: -1;">
             </div>
             
             <div id="slide1-opening-phrase">"Para quem não sabe para onde vai, qualquer caminho serve."</div>
@@ -390,6 +391,11 @@
             if (currentSlide < slides.length - 1) {
                 currentSlide++;
                 updateSlide();
+            }
+            // Reset the interactive Slide 1 elements if we navigate away and come back
+            if (currentSlide !== 0 && slide1Stage === 2) {
+                // Optional: You can choose to reset or leave as is.
+                // resetSlide1();
             }
         }
 
