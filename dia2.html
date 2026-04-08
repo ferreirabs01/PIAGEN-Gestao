@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IA Generativa para Gestores: O Valor dos Dados</title>
     <style>
+        /* Base macOS Style Variables */
         :root {
             --bg-color: #000000;
             --glass-bg: rgba(30, 30, 32, 0.6);
@@ -28,6 +29,7 @@
             justify-content: center;
         }
 
+        /* Container for Slides */
         .slide-container {
             position: relative;
             width: 85vw;
@@ -42,6 +44,7 @@
             display: none;
         }
 
+        /* Initial Start Interaction Overlay */
         .start-overlay {
             position: absolute;
             top: 0;
@@ -69,6 +72,7 @@
             100% { opacity: 0.7; }
         }
 
+        /* macOS Window Controls */
         .window-controls {
             position: absolute;
             top: 20px;
@@ -78,11 +82,16 @@
             z-index: 100;
         }
 
-        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
         .dot.red { background-color: #ff5f56; }
         .dot.yellow { background-color: #ffbd2e; }
         .dot.green { background-color: #27c93f; }
 
+        /* General Slide Styling */
         .slide {
             position: absolute;
             top: 0;
@@ -107,12 +116,42 @@
             z-index: 10;
         }
 
-        h1 { font-size: 3.5rem; font-weight: 600; margin-bottom: 1rem; line-height: 1.1; }
-        h2 { font-size: 2.5rem; font-weight: 500; color: var(--text-muted); margin-bottom: 2rem; }
-        p { font-size: 1.5rem; line-height: 1.5; color: var(--text-muted); max-width: 900px; }
-        ul { font-size: 1.5rem; line-height: 1.8; color: var(--text-muted); padding-left: 2rem; }
-        li span { color: var(--text-main); font-weight: 500; }
+        /* Typography */
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
 
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        p {
+            font-size: 1.5rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            max-width: 900px;
+        }
+
+        ul {
+            font-size: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            padding-left: 2rem;
+        }
+
+        li span {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        /* Specialized Styling for Interaction */
         #slide1-opening-phrase, #slide1-question, #slide1-answer {
             opacity: 0;
             transition: opacity 1.2s ease-in-out;
@@ -128,29 +167,31 @@
             margin-bottom: 2rem;
         }
 
-        #slide1-question { font-size: 1.8rem; text-align: center; color: var(--accent); }
-        #slide1-answer { font-size: 1.2rem; text-align: center; color: var(--text-muted); }
-
-        .alice-images-container {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 5;
-            overflow: hidden;
-            display: none;
+        #slide1-question {
+            font-size: 1.8rem;
+            text-align: center;
+            color: var(--accent);
         }
 
-        .alice-image {
-            position: absolute;
-            opacity: 0;
-            filter: blur(2px) grayscale(30%);
-            transition: opacity 2s ease-in-out, transform 2s ease-out;
+        .image-center-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 60%;
         }
 
+        .full-img {
+            max-height: 100%;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        /* Navigation Controls */
         .nav-area {
             position: absolute;
-            top: 0; bottom: 0;
+            top: 0;
+            bottom: 0;
             width: 15%;
             z-index: 100;
             cursor: pointer;
@@ -159,9 +200,11 @@
         .nav-left { left: 0; }
         .nav-right { right: 0; }
 
+        /* Progress Bar */
         .progress-bar {
             position: absolute;
-            bottom: 0; left: 0;
+            bottom: 0;
+            left: 0;
             height: 4px;
             background: var(--accent);
             transition: width 0.4s ease;
@@ -175,67 +218,76 @@
         <div class="start-prompt">Clique para Começar a Aula</div>
     </div>
 
-    <div class="slide-container" id="slide-container" onclick="handleSlide1Click()">
+    <div class="slide-container" id="slide-container">
         <div class="window-controls">
             <div class="dot red"></div>
             <div class="dot yellow"></div>
             <div class="dot green"></div>
         </div>
+
         <div class="progress-bar" id="progress"></div>
 
-        <div class="slide active" id="slide1">
-            <div class="alice-images-container" id="alice-images">
-                <img src="image_0.png" class="alice-image" style="width: 30%; top: 10%; left: -10%; transform: rotate(-15deg);">
-                <img src="image_1.png" class="alice-image" style="width: 20%; bottom: 5%; right: -5%; transform: rotate(10deg);">
-                <img src="image_6.png" class="alice-image" style="width: 25%; top: 40%; right: 5%; transform: rotate(-5deg); opacity: 0.1;">
-                <img src="image_2.png" class="alice-image" style="width: 40%; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: blur(0); z-index: -1;">
-                <img src="image_3.png" class="alice-image" style="width: 45%; bottom: 0%; left: 10%; filter: blur(0); z-index: 2;">
-            </div>
-            
+        <div class="slide active" id="slide1" onclick="handleSlide1Click()">
             <div id="slide1-opening-phrase">"Para quem não sabe para onde vai, qualquer caminho serve."</div>
             <div id="slide1-question">De quem é a frase?</div>
-            <div id="slide1-answer">(Gato de Cheshire - Alice no País das Maravilhas)</div>
-            <p style="text-align: center; margin-top: 3rem;" id="slide1-prompt">Clique para avançar...</p>
+            <p style="text-align: center; color: var(--text-muted); font-size: 1rem; margin-top: 3rem;" id="slide1-prompt">Clique para descobrir...</p>
+        </div>
+
+        <div class="slide" id="slide2" onclick="nextSlide()">
+            <div class="image-center-container">
+                <img src="image_2.png" class="full-img" alt="Alice">
+            </div>
+            <h2 style="text-align: center; margin-top: 20px;">(Gato de Cheshire - Alice no País das Maravilhas)</h2>
+        </div>
+
+        <div class="slide" id="slide3" onclick="nextSlide()">
+            <div class="image-center-container">
+                <img src="image_3.png" class="full-img" alt="Desenvolvedor">
+            </div>
+            <p style="text-align: center; width: 100%; margin-top: 20px;">Múltiplos caminhos, múltiplas linguagens, um único objetivo: a arquitetura.</p>
         </div>
 
         <div class="slide">
             <h2>O Valor dos Dados</h2>
             <h1>Além das Planilhas</h1>
-            <p>Até que ponto é viável gerenciar a organização através do Excel?</p>
+            <p>Até que ponto é viável gerenciar a organização através do Excel? Quando uma solução complexa se torna vital?</p>
             <ul>
-                <li><span>O Ativo Principal:</span> Arquitetura dos dados.</li>
-                <li><span>Dados e I.A.:</span> Sem estrutura, não há IA.</li>
+                <li><span>O Ativo Principal:</span> O verdadeiro valor está na arquitetura dos dados.</li>
+                <li><span>Dados e I.A.:</span> Sem dados estruturados, a I.A. não possui combustível.</li>
+                <li><span>Decisão Estratégica:</span> Modelagem de dados como base organizacional.</li>
             </ul>
         </div>
 
         <div class="slide">
-            <h2>Segurança</h2>
+            <h2>Segurança da Informação</h2>
             <h1>Compliance e Ética</h1>
-            <p>Proteção de ativos intelectuais.</p>
+            <p>A proteção dos ativos intelectuais e do segredo de negócio no uso de IA Generativa.</p>
             <ul>
-                <li><span>Risco:</span> Exposição de código.</li>
-                <li><span>Dados Sensíveis:</span> Vazamento via prompts.</li>
+                <li><span>O Risco da Exposição:</span> Dados sensíveis em prompts podem vazar.</li>
+                <li><span>Governança:</span> Diretrizes claras sobre o uso de dados corporativos.</li>
             </ul>
         </div>
 
         <div class="slide">
-            <h2>Treinamento</h2>
-            <h1>Humano vs. IA</h1>
-            <p>Conhecimento empírico vs. modelos preditivos.</p>
+            <h2>Modelos de Treinamento</h2>
+            <h1>Experiência Humana vs. IA</h1>
+            <p>A correlação entre o tempo de empresa e o treinamento de modelos preditivos.</p>
             <ul>
-                <li><span>Sazonalidade:</span> Padrões rápidos.</li>
-                <li><span>Intuição:</span> Sinais vs. estatística.</li>
+                <li><span>Sazonalidade:</span> Identificação rápida de padrões e correlações.</li>
+                <li><span>Intuição vs. Estatística:</span> Velocidade e escala na tomada de decisão.</li>
             </ul>
         </div>
 
         <div class="slide">
-            <h2>Próximas Aulas</h2>
-            <h1>Storytelling</h1>
+            <h2>Trilha das Próximas Aulas</h2>
+            <h1>Storytelling e Prática</h1>
             <ul>
-                <li><span>Semana 2:</span> Engenharia de Prompts.</li>
-                <li><span>Laboratório:</span> Prática Vertex AI.</li>
+                <li><span>Semana Seguinte:</span> Engenharia de Prompts.</li>
+                <li><span>Casos Avançados:</span> Automação com Google Vertex AI.</li>
+                <li><span>Laboratório:</span> Desenvolvimento prático.</li>
             </ul>
         </div>
+
     </div>
 
     <div class="nav-area nav-left" id="nav-left" onclick="prevSlide()"></div>
@@ -260,53 +312,45 @@
         }
 
         function handleSlide1Click() {
-            if (currentSlide === 0) {
-                if (slide1Stage === 1) {
-                    document.getElementById('slide1-answer').style.opacity = 1;
-                    triggerAliceImages();
-                    document.getElementById('slide1-prompt').innerText = "Clique para iniciar...";
-                    slide1Stage = 2;
-                } else if (slide1Stage === 2) {
-                    currentSlide++;
-                    updateSlide();
-                    enableNormalNavigation();
-                }
+            if (currentSlide === 0 && slide1Stage === 1) {
+                nextSlide();
+                enableNormalNavigation();
             }
-        }
-
-        function triggerAliceImages() {
-            const container = document.getElementById('alice-images');
-            container.style.display = 'block';
-            const images = container.querySelectorAll('.alice-image');
-            images.forEach((img, index) => {
-                setTimeout(() => {
-                    // Ajuste de opacidade para as imagens principais ficarem bem visíveis
-                    let targetOpacity = "0.8";
-                    if(img.src.includes('image_6')) targetOpacity = "0.1";
-                    if(img.src.includes('image_2') || img.src.includes('image_3')) targetOpacity = "1";
-                    
-                    img.style.opacity = targetOpacity;
-                    img.style.transform += ' translateY(-20px)';
-                }, index * 300);
-            });
         }
 
         function enableNormalNavigation() {
             navLeft.style.display = 'block';
             navRight.style.display = 'block';
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowRight') nextSlide();
-                if (e.key === 'ArrowLeft') prevSlide();
-            });
+            document.addEventListener('keydown', handleKeyboardNav);
+        }
+
+        function handleKeyboardNav(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
         }
 
         function updateSlide() {
-            slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
-            progressBar.style.width = ((currentSlide + 1) / slides.length * 100) + '%';
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) slide.classList.add('active');
+            });
+            const progressPercentage = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = progressPercentage + '%';
         }
 
-        function nextSlide() { if (currentSlide < slides.length - 1) { currentSlide++; updateSlide(); } }
-        function prevSlide() { if (currentSlide > 1) { currentSlide--; updateSlide(); } }
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
     </script>
 </body>
 </html>
