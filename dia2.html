@@ -1,404 +1,410 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IA Generativa para Gestores: O Valor dos Dados</title>
-    <style>
-        /* Base macOS Style Variables */
-        :root {
-            --bg-color: #000000;
-            --glass-bg: rgba(30, 30, 32, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text-main: #f5f5f7;
-            --text-muted: #86868b;
-            --accent: #0a84ff;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA Generativa para Gestores: O Valor dos Dados</title>
+    <style>
+        /* Base macOS Style Variables */
+        :root {
+            --bg-color: #000000;
+            --glass-bg: rgba(30, 30, 32, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f5f5f7;
+            --text-muted: #86868b;
+            --accent: #0a84ff;
+        }
 
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            background: var(--bg-color);
-            background-image: radial-gradient(circle at 80% -20%, #2c2c35 0%, #000000 100%);
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: var(--text-main);
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: var(--bg-color);
+            background-image: radial-gradient(circle at 80% -20%, #2c2c35 0%, #000000 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-main);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-        /* Container for Slides (initially hidden) */
-        .slide-container {
-            position: relative;
-            width: 85vw;
-            height: 80vh;
-            background: var(--glass-bg);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
-            overflow: hidden;
-            display: none; /* Hidden until interaction */
-        }
+        /* Container for Slides (initially hidden) */
+        .slide-container {
+            position: relative;
+            width: 85vw;
+            height: 80vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            display: none; /* Hidden until interaction */
+        }
 
-        /* Initial Start Interaction Overlay */
-        .start-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            cursor: pointer;
-        }
+        /* Initial Start Interaction Overlay */
+        .start-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            cursor: pointer;
+        }
 
-        .start-prompt {
-            font-size: 2rem;
-            color: var(--accent);
-            text-align: center;
-            animation: pulse 1.5s infinite;
-        }
+        .start-prompt {
+            font-size: 2rem;
+            color: var(--accent);
+            text-align: center;
+            animation: pulse 1.5s infinite;
+        }
 
-        @keyframes pulse {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
-        }
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
 
-        /* macOS Window Controls */
-        .window-controls {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            display: flex;
-            gap: 8px;
-            z-index: 100;
-        }
+        /* macOS Window Controls */
+        .window-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
 
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        .dot.red { background-color: #ff5f56; }
-        .dot.yellow { background-color: #ffbd2e; }
-        .dot.green { background-color: #27c93f; }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .dot.red { background-color: #ff5f56; }
+        .dot.yellow { background-color: #ffbd2e; }
+        .dot.green { background-color: #27c93f; }
 
-        /* General Slide Styling */
-        .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            padding: 60px 80px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            opacity: 0;
-            transform: translateY(20px) scale(0.98);
-            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-            pointer-events: none;
-        }
+        /* General Slide Styling */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 60px 80px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            pointer-events: none;
+        }
 
-        .slide.active {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            pointer-events: auto;
-            z-index: 10;
-        }
+        .slide.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+            z-index: 10;
+        }
 
-        /* Typography */
-        h1 {
-            font-size: 3.5rem;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            margin-bottom: 1rem;
-            line-height: 1.1;
-        }
+        /* Typography */
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
 
-        h2 {
-            font-size: 2.5rem;
-            font-weight: 500;
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-        }
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
 
-        p {
-            font-size: 1.5rem;
-            line-height: 1.5;
-            color: var(--text-muted);
-            max-width: 900px;
-        }
+        p {
+            font-size: 1.5rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            max-width: 900px;
+        }
 
-        ul {
-            font-size: 1.5rem;
-            line-height: 1.8;
-            color: var(--text-muted);
-            padding-left: 2rem;
-        }
+        ul {
+            font-size: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            padding-left: 2rem;
+        }
 
-        li span {
-            color: var(--text-main);
-            font-weight: 500;
-        }
+        li span {
+            color: var(--text-main);
+            font-weight: 500;
+        }
 
-        /* Specialized Styling for Slide 1 with Interaction */
-        #slide1-opening-phrase, #slide1-question, #slide1-answer {
-            opacity: 0; /* Hidden initially, controlled by JS */
-            transition: opacity 1.2s ease-in-out;
-        }
+        /* Specialized Styling for Slide 1 with Interaction */
+        #slide1-opening-phrase, #slide1-question, #slide1-answer {
+            opacity: 0; /* Hidden initially, controlled by JS */
+            transition: opacity 1.2s ease-in-out;
+        }
 
-        #slide1-opening-phrase {
-            font-size: 4rem;
-            font-weight: 700;
-            text-align: center;
-            background: -webkit-linear-gradient(135deg, #fff, #86868b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 2rem;
-        }
+        #slide1-opening-phrase {
+            font-size: 4rem;
+            font-weight: 700;
+            text-align: center;
+            background: -webkit-linear-gradient(135deg, #fff, #86868b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+        }
 
-        #slide1-question {
-            font-size: 1.8rem;
-            text-align: center;
-            color: var(--accent);
-        }
+        #slide1-question {
+            font-size: 1.8rem;
+            text-align: center;
+            color: var(--accent);
+        }
 
-        #slide1-answer {
-            font-size: 1.2rem;
-            text-align: center;
-            color: var(--text-muted);
-        }
+        #slide1-answer {
+            font-size: 1.2rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
 
-        /* Alice in Wonderland Images on Trigger */
-        .alice-images-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5; /* Behind text, in front of glass */
-            overflow: hidden;
-            display: none; /* Hidden until trigger */
-        }
+        /* Alice in Wonderland Images on Trigger */
+        .alice-images-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5; /* Behind text, in front of glass */
+            overflow: hidden;
+            display: none; /* Hidden until trigger */
+        }
 
-        .alice-image {
-            position: absolute;
-            opacity: 0; /* Animate into opacity */
-            filter: blur(2px) grayscale(30%);
-            transition: opacity 2s ease-in-out, transform 2s ease-out;
-        }
+        .alice-image {
+            position: absolute;
+            opacity: 0; /* Animate into opacity */
+            filter: blur(2px) grayscale(30%);
+            transition: opacity 2s ease-in-out, transform 2s ease-out;
+        }
 
-        /* Navigation Controls */
-        .nav-area {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 15%;
-            z-index: 100;
-            cursor: pointer;
-            display: none; /* Only show after slide 1 completes */
-        }
-        .nav-left { left: 0; }
-        .nav-right { right: 0; }
+        /* Navigation Controls */
+        .nav-area {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 15%;
+            z-index: 100;
+            cursor: pointer;
+            display: none; /* Only show after slide 1 completes */
+        }
+        .nav-left { left: 0; }
+        .nav-right { right: 0; }
 
-        /* Progress Bar */
-        .progress-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 4px;
-            background: var(--accent);
-            transition: width 0.4s ease;
-            z-index: 100;
-        }
-    </style>
+        /* Progress Bar */
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: var(--accent);
+            transition: width 0.4s ease;
+            z-index: 100;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="start-overlay" id="start-overlay" onclick="startClass()">
-        <div class="start-prompt">Clique para Começar a Aula</div>
-    </div>
+    <div class="start-overlay" id="start-overlay" onclick="startClass()">
+        <div class="start-prompt">Clique para Começar a Aula</div>
+    </div>
 
-    <div class="slide-container" id="slide-container" onclick="handleSlide1Click()">
-        <div class="window-controls">
-            <div class="dot red"></div>
-            <div class="dot yellow"></div>
-            <div class="dot green"></div>
-        </div>
+    <div class="slide-container" id="slide-container" onclick="handleSlide1Click()">
+        <div class="window-controls">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+        </div>
 
-        <div class="progress-bar" id="progress"></div>
+        <div class="progress-bar" id="progress"></div>
 
-        <div class="slide active" id="slide1">
-            <div class="alice-images-container" id="alice-images">
-                <img src="image_0.png" alt="Stylized Cheshire Cat illustration" class="alice-image" style="width: 30%; top: 10%; left: -10%; transform: rotate(-15deg);">
-                <img src="image_1.png" alt="Stylized Cheshire Cat smile" class="alice-image" style="width: 20%; bottom: 5%; right: -5%; transform: rotate(10deg);">
-                <img src="image_6.png" alt="Alice in Wonderland stylized background element" class="alice-image" style="width: 25%; top: 40%; right: 5%; transform: rotate(-5deg); opacity: 0.1;">
-            </div>
-            
-            <div id="slide1-opening-phrase">"Para quem não sabe para onde vai, qualquer caminho serve."</div>
-            <div id="slide1-question">De quem é a frase?</div>
-            <div id="slide1-answer">(Gato de Cheshire - Alice no País das Maravilhas)</div>
-            <p style="text-align: center; color: var(--text-muted); font-size: 1rem; margin-top: 3rem; opacity: 0.7;" id="slide1-prompt">Clique para avançar...</p>
-        </div>
+        <div class="slide active" id="slide1">
+            <div class="alice-images-container" id="alice-images">
+                <img src="image_0.png" alt="Stylized Cheshire Cat illustration" class="alice-image" style="width: 30%; top: 10%; left: -10%; transform: rotate(-15deg);">
+                <img src="image_1.png" alt="Stylized Cheshire Cat smile" class="alice-image" style="width: 20%; bottom: 5%; right: -5%; transform: rotate(10deg);">
+                <img src="image_6.png" alt="Alice in Wonderland stylized background element" class="alice-image" style="width: 25%; top: 40%; right: 5%; transform: rotate(-5deg); opacity: 0.1;">
+                <img src="image_2.png" alt="Alice at the crossroads" class="alice-image" style="width: 40%; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: blur(0) grayscale(0); z-index: -1;">
+            </div>
+            
+            <div id="slide1-opening-phrase">"Para quem não sabe para onde vai, qualquer caminho serve."</div>
+            <div id="slide1-question">De quem é a frase?</div>
+            <div id="slide1-answer">(Gato de Cheshire - Alice no País das Maravilhas)</div>
+            <p style="text-align: center; color: var(--text-muted); font-size: 1rem; margin-top: 3rem; opacity: 0.7;" id="slide1-prompt">Clique para avançar...</p>
+        </div>
 
-        <div class="slide">
-            <h2>O Valor dos Dados</h2>
-            <h1>Além das Planilhas</h1>
-            <p>Até que ponto é viável gerenciar a organização através do Excel? Quando uma solução complexa se torna vital?</p>
-            <ul>
-                <li><span>O Ativo Principal:</span> O verdadeiro valor está na arquitetura dos dados, não apenas na ferramenta.</li>
-                <li><span>Dados e I.A.:</span> Sem dados limpos e estruturados, a Inteligência Artificial não possui combustível.</li>
-                <li><span>Decisão Estratégica:</span> Modelagem de dados como base para previsibilidade organizacional.</li>
-            </ul>
-        </div>
+        <div class="slide">
+            <h2>O Valor dos Dados</h2>
+            <h1>Além das Planilhas</h1>
+            <p>Até que ponto é viável gerenciar a organização através do Excel? Quando uma solução complexa se torna vital?</p>
+            <ul>
+                <li><span>O Ativo Principal:</span> O verdadeiro valor está na arquitetura dos dados, não apenas na ferramenta.</li>
+                <li><span>Dados e I.A.:</span> Sem dados limpos e estruturados, a Inteligência Artificial não possui combustível.</li>
+                <li><span>Decisão Estratégica:</span> Modelagem de dados como base para previsibilidade organizacional.</li>
+            </ul>
+        </div>
 
-        <div class="slide">
-            <h2>Segurança da Informação</h2>
-            <h1>Compliance, Ética e Privacidade</h1>
-            <p>A proteção dos ativos intelectuais e do segredo de negócio no uso de IA Generativa.</p>
-            <ul>
-                <li><span>O Risco da Exposição:</span> O recente "expose" do código e comportamento do Claude como estudo de caso.</li>
-                <li><span>Dados Sensíveis:</span> O que submetemos aos modelos (prompts) pode vazar ou treinar bases de terceiros.</li>
-                <li><span>Governança:</span> A importância de diretrizes claras sobre o uso de dados corporativos em plataformas públicas.</li>
-            </ul>
-        </div>
+        <div class="slide">
+            <h2>Segurança da Informação</h2>
+            <h1>Compliance, Ética e Privacidade</h1>
+            <p>A proteção dos ativos intelectuais e do segredo de negócio no uso de IA Generativa.</p>
+            <ul>
+                <li><span>O Risco da Exposição:</span> O recente "expose" do código e comportamento do Claude como estudo de caso.</li>
+                <li><span>Dados Sensíveis:</span> O que submetemos aos modelos (prompts) pode vazar ou treinar bases de terceiros.</li>
+                <li><span>Governança:</span> A importância de diretrizes claras sobre o uso de dados corporativos em plataformas públicas.</li>
+            </ul>
+        </div>
 
-        <div class="slide">
-            <h2>Modelos de Treinamento</h2>
-            <h1>Experiência Humana vs. IA</h1>
-            <p>A correlação entre o tempo de empresa (conhecimento empírico) e o treinamento de modelos preditivos.</p>
-            <ul>
-                <li><span>Sazonalidade e Previsão:</span> Identificação rápida de padrões (Ex: surtos de Dengue vs. casos de Covid na gestão hospitalar).</li>
-                <li><span>Intuição vs. Estatística:</span> O profissional experiente reconhece os sinais; a I.A. treinada mapeia as correlações com velocidade e escala.</li>
-                <li><span>Compartilhamento:</span> Como extrair esse conhecimento do colaborador para os dados (preservando a privacidade).</li>
-            </ul>
-        </div>
+        <div class="slide">
+            <h2>Modelos de Treinamento</h2>
+            <h1>Experiência Humana vs. IA</h1>
+            <p>A correlação entre o tempo de empresa (conhecimento empírico) e o treinamento de modelos preditivos.</p>
+            <ul>
+                <li><span>Sazonalidade e Previsão:</span> Identificação rápida de padrões (Ex: surtos de Dengue vs. casos de Covid na gestão hospitalar).</li>
+                <li><span>Intuição vs. Estatística:</span> O profissional experiente reconhece os sinais; a I.A. treinada mapeia as correlações com velocidade e escala.</li>
+                <li><span>Compartilhamento:</span> Como extrair esse conhecimento do colaborador para os dados (preservando a privacidade).</li>
+            </ul>
+        </div>
 
-        <div class="slide">
-            <h2>Trilha das Próximas Aulas</h2>
-            <h1>Storytelling e Aplicação Prática</h1>
-            <p>Transformando dados brutos em narrativas (Storytelling) e aprendizado contínuo através da Inteligência Artificial.</p>
-            <ul>
-                <li><span>Semana Seguinte:</span> Engenharia de Prompts - Como guiar a I.A. para extrair o real valor dos dados.</li>
-                <li><span>Casos de Uso Avançados:</span> Análise de sentimento utilizando automação (Gmail + Google Vertex AI).</li>
-                <li><span>Laboratório:</span> Desenvolvimento prático baseado no desempenho da turma.</li>
-            </ul>
-        </div>
+        <div class="slide">
+            <h2>Trilha das Próximas Aulas</h2>
+            <h1>Storytelling e Aplicação Prática</h1>
+            <p>Transformando dados brutos em narrativas (Storytelling) e aprendizado contínuo através da Inteligência Artificial.</p>
+            <ul>
+                <li><span>Semana Seguinte:</span> Engenharia de Prompts - Como guiar a I.A. para extrair o real valor dos dados.</li>
+                <li><span>Casos de Uso Avançados:</span> Análise de sentimento utilizando automação (Gmail + Google Vertex AI).</li>
+                <li><span>Laboratório:</span> Desenvolvimento prático baseado no desempenho da turma.</li>
+            </ul>
+        </div>
 
-    </div>
+    </div>
 
-    <div class="nav-area nav-left" id="nav-left" onclick="prevSlide()"></div>
-    <div class="nav-area nav-right" id="nav-right" onclick="nextSlide()"></div>
+    <div class="nav-area nav-left" id="nav-left" onclick="prevSlide()"></div>
+    <div class="nav-area nav-right" id="nav-right" onclick="nextSlide()"></div>
 
-    <script>
-        let currentSlide = 0;
-        let slide1Stage = 0; // Tracks interaction steps within Slide 1
-        const slides = document.querySelectorAll('.slide');
-        const progressBar = document.getElementById('progress');
-        const slideContainer = document.getElementById('slide-container');
-        const startOverlay = document.getElementById('start-overlay');
-        const navLeft = document.getElementById('nav-left');
-        const navRight = document.getElementById('nav-right');
+    <script>
+        let currentSlide = 0;
+        let slide1Stage = 0; // Tracks interaction steps within Slide 1
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progress');
+        const slideContainer = document.getElementById('slide-container');
+        const startOverlay = document.getElementById('start-overlay');
+        const navLeft = document.getElementById('nav-left');
+        const navRight = document.getElementById('nav-right');
 
-        // Initial entry interaction
-        function startClass() {
-            startOverlay.style.display = 'none';
-            slideContainer.style.display = 'block';
-            
-            // Sequence for Slide 1
-            setTimeout(() => {
-                document.getElementById('slide1-opening-phrase').style.opacity = 1;
-            }, 500);
-            setTimeout(() => {
-                document.getElementById('slide1-question').style.opacity = 1;
-            }, 3000);
-            
-            slide1Stage = 1; // Class has started, phrase and question are showing
-        }
+        // Initial entry interaction
+        function startClass() {
+            startOverlay.style.display = 'none';
+            slideContainer.style.display = 'block';
+            
+            // Sequence for Slide 1
+            setTimeout(() => {
+                document.getElementById('slide1-opening-phrase').style.opacity = 1;
+            }, 500);
+            setTimeout(() => {
+                document.getElementById('slide1-question').style.opacity = 1;
+            }, 3000);
+            
+            slide1Stage = 1; // Class has started, phrase and question are showing
+        }
 
-        // Handle clicks specifically on Slide 1 for triggers
-        function handleSlide1Click() {
-            if (currentSlide === 0) {
-                if (slide1Stage === 1) {
-                    // Trigger the answer AND the images
-                    document.getElementById('slide1-answer').style.opacity = 1;
-                    triggerAliceImages();
-                    document.getElementById('slide1-prompt').innerText = "Clique para iniciar a trilha...";
-                    slide1Stage = 2; // Slide 1 is fully complete
-                } else if (slide1Stage === 2) {
-                    // Allow advancement to the next slide
-                    currentSlide++;
-                    updateSlide();
-                    enableNormalNavigation();
-                }
-            }
-        }
+        // Handle clicks specifically on Slide 1 for triggers
+        function handleSlide1Click() {
+            if (currentSlide === 0) {
+                if (slide1Stage === 1) {
+                    // Trigger the answer AND the images
+                    document.getElementById('slide1-answer').style.opacity = 1;
+                    triggerAliceImages();
+                    document.getElementById('slide1-prompt').innerText = "Clique para iniciar a trilha...";
+                    slide1Stage = 2; // Slide 1 is fully complete
+                } else if (slide1Stage === 2) {
+                    // Allow advancement to the next slide
+                    currentSlide++;
+                    updateSlide();
+                    enableNormalNavigation();
+                }
+            }
+        }
 
-        function triggerAliceImages() {
-            const container = document.getElementById('alice-images');
-            container.style.display = 'block';
-            const images = container.querySelectorAll('.alice-image');
-            images.forEach((img, index) => {
-                setTimeout(() => {
-                    img.style.opacity = img.style.opacity === "0.1" ? "0.1" : "0.5"; // Special case for background
-                    img.style.transform += ' translateY(-20px)'; // Smooth float in
-                }, index * 400); // Staggered appearance
-            });
-        }
+        function triggerAliceImages() {
+            const container = document.getElementById('alice-images');
+            container.style.display = 'block';
+            const images = container.querySelectorAll('.alice-image');
+            images.forEach((img, index) => {
+                setTimeout(() => {
+                    img.style.opacity = img.style.opacity === "0.1" ? "0.1" : "0.5"; // Special case for background
+                    img.style.transform += ' translateY(-20px)'; // Smooth float in
+                }, index * 400); // Staggered appearance
+            });
+        }
 
-        function enableNormalNavigation() {
-            navLeft.style.display = 'block';
-            navRight.style.display = 'block';
-            // Also enable keyboard navigation
-            document.addEventListener('keydown', handleKeyboardNav);
-        }
+        function enableNormalNavigation() {
+            navLeft.style.display = 'block';
+            navRight.style.display = 'block';
+            // Also enable keyboard navigation
+            document.addEventListener('keydown', handleKeyboardNav);
+        }
 
-        function handleKeyboardNav(e) {
-            if (currentSlide > 0 || (currentSlide === 0 && slide1Stage === 2)) {
-                if (e.key === 'ArrowRight' || e.key === 'Space') {
-                    nextSlide();
-                } else if (e.key === 'ArrowLeft') {
-                    prevSlide();
-                }
-            }
-        }
+        function handleKeyboardNav(e) {
+            if (currentSlide > 0 || (currentSlide === 0 && slide1Stage === 2)) {
+                if (e.key === 'ArrowRight' || e.key === 'Space') {
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            }
+        }
 
-        function updateSlide() {
-            slides.forEach((slide, index) => {
-                slide.classList.remove('active');
-                if (index === currentSlide) {
-                    slide.classList.add('active');
-                }
-            });
-            // Update progress bar (adjusted for 1-based index)
-            const progressPercentage = ((currentSlide + 1) / slides.length) * 100;
-            progressBar.style.width = progressPercentage + '%';
-        }
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                }
+            });
+            // Update progress bar (adjusted for 1-based index)
+            const progressPercentage = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = progressPercentage + '%';
+        }
 
-        function nextSlide() {
-            if (currentSlide < slides.length - 1) {
-                currentSlide++;
-                updateSlide();
-            }
-        }
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+            // Reset the interactive Slide 1 elements if we navigate away and come back
+            if (currentSlide !== 0 && slide1Stage === 2) {
+                // Optional: You can choose to reset or leave as is.
+                // resetSlide1();
+            }
+        }
 
-        function prevSlide() {
-            if (currentSlide > 1) { // Prevents going back to the interactive first slide
-                currentSlide--;
-                updateSlide();
-            }
-        }
-    </script>
+        function prevSlide() {
+            if (currentSlide > 1) { // Prevents going back to the interactive first slide
+                currentSlide--;
+                updateSlide();
+            }
+        }
+    </script>
 </body>
 </html>
