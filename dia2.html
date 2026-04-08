@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IA Generativa para Gestores: O Valor dos Dados</title>
     <style>
-        /* Variáveis de estilo baseadas na Apple/iOS */
+        /* Base macOS Style Variables */
         :root {
             --bg-color: #000000;
             --glass-bg: rgba(30, 30, 32, 0.6);
@@ -29,7 +29,7 @@
             justify-content: center;
         }
 
-        /* Container do Slide com efeito Glassmorphism */
+        /* Container for Slides (initially hidden) */
         .slide-container {
             position: relative;
             width: 85vw;
@@ -41,9 +41,38 @@
             border-radius: 24px;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
             overflow: hidden;
+            display: none; /* Hidden until interaction */
         }
 
-        /* Botões de janela macOS */
+        /* Initial Start Interaction Overlay */
+        .start-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            cursor: pointer;
+        }
+
+        .start-prompt {
+            font-size: 2rem;
+            color: var(--accent);
+            text-align: center;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        /* macOS Window Controls */
         .window-controls {
             position: absolute;
             top: 20px;
@@ -62,7 +91,7 @@
         .dot.yellow { background-color: #ffbd2e; }
         .dot.green { background-color: #27c93f; }
 
-        /* Slides */
+        /* General Slide Styling */
         .slide {
             position: absolute;
             top: 0;
@@ -87,7 +116,7 @@
             z-index: 10;
         }
 
-        /* Tipografia */
+        /* Typography */
         h1 {
             font-size: 3.5rem;
             font-weight: 600;
@@ -110,11 +139,6 @@
             max-width: 900px;
         }
 
-        .highlight {
-            color: var(--text-main);
-            font-weight: 500;
-        }
-
         ul {
             font-size: 1.5rem;
             line-height: 1.8;
@@ -127,8 +151,13 @@
             font-weight: 500;
         }
 
-        /* Slide Inicial Específico */
-        .hook-text {
+        /* Specialized Styling for Slide 1 with Interaction */
+        #slide1-opening-phrase, #slide1-question, #slide1-answer {
+            opacity: 0; /* Hidden initially, controlled by JS */
+            transition: opacity 1.2s ease-in-out;
+        }
+
+        #slide1-opening-phrase {
             font-size: 4rem;
             font-weight: 700;
             text-align: center;
@@ -138,28 +167,39 @@
             margin-bottom: 2rem;
         }
 
-        .question-text {
+        #slide1-question {
             font-size: 1.8rem;
             text-align: center;
             color: var(--accent);
-            opacity: 0;
-            transform: translateY(10px);
-            animation: fadeIn 2s forwards 2s;
         }
 
-        .answer-text {
+        #slide1-answer {
             font-size: 1.2rem;
             text-align: center;
             color: var(--text-muted);
-            opacity: 0;
-            animation: fadeIn 2s forwards 6s;
         }
 
-        @keyframes fadeIn {
-            to { opacity: 1; transform: translateY(0); }
+        /* Alice in Wonderland Images on Trigger */
+        .alice-images-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5; /* Behind text, in front of glass */
+            overflow: hidden;
+            display: none; /* Hidden until trigger */
         }
 
-        /* Controles de Navegação (Invisíveis, clicáveis) */
+        .alice-image {
+            position: absolute;
+            opacity: 0; /* Animate into opacity */
+            filter: blur(2px) grayscale(30%);
+            transition: opacity 2s ease-in-out, transform 2s ease-out;
+        }
+
+        /* Navigation Controls */
         .nav-area {
             position: absolute;
             top: 0;
@@ -167,11 +207,12 @@
             width: 15%;
             z-index: 100;
             cursor: pointer;
+            display: none; /* Only show after slide 1 completes */
         }
         .nav-left { left: 0; }
         .nav-right { right: 0; }
 
-        /* Rodapé de progresso */
+        /* Progress Bar */
         .progress-bar {
             position: absolute;
             bottom: 0;
@@ -185,10 +226,11 @@
 </head>
 <body>
 
-    <div class="nav-area nav-left" onclick="prevSlide()"></div>
-    <div class="nav-area nav-right" onclick="nextSlide()"></div>
+    <div class="start-overlay" id="start-overlay" onclick="startClass()">
+        <div class="start-prompt">Clique para Começar a Aula</div>
+    </div>
 
-    <div class="slide-container">
+    <div class="slide-container" id="slide-container" onclick="handleSlide1Click()">
         <div class="window-controls">
             <div class="dot red"></div>
             <div class="dot yellow"></div>
@@ -197,10 +239,17 @@
 
         <div class="progress-bar" id="progress"></div>
 
-        <div class="slide active">
-            <div class="hook-text">"Para quem não sabe para onde vai, qualquer caminho serve."</div>
-            <div class="question-text">De quem é a frase?</div>
-            <div class="answer-text">(Gato de Cheshire - Alice no País das Maravilhas)</div>
+        <div class="slide active" id="slide1">
+            <div class="alice-images-container" id="alice-images">
+                <img src="image_0.png" alt="Stylized Cheshire Cat illustration" class="alice-image" style="width: 30%; top: 10%; left: -10%; transform: rotate(-15deg);">
+                <img src="image_1.png" alt="Stylized Cheshire Cat smile" class="alice-image" style="width: 20%; bottom: 5%; right: -5%; transform: rotate(10deg);">
+                <img src="image_6.png" alt="Alice in Wonderland stylized background element" class="alice-image" style="width: 25%; top: 40%; right: 5%; transform: rotate(-5deg); opacity: 0.1;">
+            </div>
+            
+            <div id="slide1-opening-phrase">"Para quem não sabe para onde vai, qualquer caminho serve."</div>
+            <div id="slide1-question">De quem é a frase?</div>
+            <div id="slide1-answer">(Gato de Cheshire - Alice no País das Maravilhas)</div>
+            <p style="text-align: center; color: var(--text-muted); font-size: 1rem; margin-top: 3rem; opacity: 0.7;" id="slide1-prompt">Clique para avançar...</p>
         </div>
 
         <div class="slide">
@@ -249,10 +298,81 @@
 
     </div>
 
+    <div class="nav-area nav-left" id="nav-left" onclick="prevSlide()"></div>
+    <div class="nav-area nav-right" id="nav-right" onclick="nextSlide()"></div>
+
     <script>
         let currentSlide = 0;
+        let slide1Stage = 0; // Tracks interaction steps within Slide 1
         const slides = document.querySelectorAll('.slide');
         const progressBar = document.getElementById('progress');
+        const slideContainer = document.getElementById('slide-container');
+        const startOverlay = document.getElementById('start-overlay');
+        const navLeft = document.getElementById('nav-left');
+        const navRight = document.getElementById('nav-right');
+
+        // Initial entry interaction
+        function startClass() {
+            startOverlay.style.display = 'none';
+            slideContainer.style.display = 'block';
+            
+            // Sequence for Slide 1
+            setTimeout(() => {
+                document.getElementById('slide1-opening-phrase').style.opacity = 1;
+            }, 500);
+            setTimeout(() => {
+                document.getElementById('slide1-question').style.opacity = 1;
+            }, 3000);
+            
+            slide1Stage = 1; // Class has started, phrase and question are showing
+        }
+
+        // Handle clicks specifically on Slide 1 for triggers
+        function handleSlide1Click() {
+            if (currentSlide === 0) {
+                if (slide1Stage === 1) {
+                    // Trigger the answer AND the images
+                    document.getElementById('slide1-answer').style.opacity = 1;
+                    triggerAliceImages();
+                    document.getElementById('slide1-prompt').innerText = "Clique para iniciar a trilha...";
+                    slide1Stage = 2; // Slide 1 is fully complete
+                } else if (slide1Stage === 2) {
+                    // Allow advancement to the next slide
+                    currentSlide++;
+                    updateSlide();
+                    enableNormalNavigation();
+                }
+            }
+        }
+
+        function triggerAliceImages() {
+            const container = document.getElementById('alice-images');
+            container.style.display = 'block';
+            const images = container.querySelectorAll('.alice-image');
+            images.forEach((img, index) => {
+                setTimeout(() => {
+                    img.style.opacity = img.style.opacity === "0.1" ? "0.1" : "0.5"; // Special case for background
+                    img.style.transform += ' translateY(-20px)'; // Smooth float in
+                }, index * 400); // Staggered appearance
+            });
+        }
+
+        function enableNormalNavigation() {
+            navLeft.style.display = 'block';
+            navRight.style.display = 'block';
+            // Also enable keyboard navigation
+            document.addEventListener('keydown', handleKeyboardNav);
+        }
+
+        function handleKeyboardNav(e) {
+            if (currentSlide > 0 || (currentSlide === 0 && slide1Stage === 2)) {
+                if (e.key === 'ArrowRight' || e.key === 'Space') {
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            }
+        }
 
         function updateSlide() {
             slides.forEach((slide, index) => {
@@ -261,7 +381,7 @@
                     slide.classList.add('active');
                 }
             });
-            // Atualiza a barra de progresso
+            // Update progress bar (adjusted for 1-based index)
             const progressPercentage = ((currentSlide + 1) / slides.length) * 100;
             progressBar.style.width = progressPercentage + '%';
         }
@@ -274,23 +394,11 @@
         }
 
         function prevSlide() {
-            if (currentSlide > 0) {
+            if (currentSlide > 1) { // Prevents going back to the interactive first slide
                 currentSlide--;
                 updateSlide();
             }
         }
-
-        // Navegação pelo teclado
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === 'Space') {
-                nextSlide();
-            } else if (e.key === 'ArrowLeft') {
-                prevSlide();
-            }
-        });
-
-        // Inicializa o progresso
-        updateSlide();
     </script>
 </body>
 </html>
