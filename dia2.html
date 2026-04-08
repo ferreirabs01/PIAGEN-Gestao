@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA Generativa para Gestores: O Valor dos Dados</title>
+    <style>
+        /* Variáveis de estilo baseadas na Apple/iOS */
+        :root {
+            --bg-color: #000000;
+            --glass-bg: rgba(30, 30, 32, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f5f5f7;
+            --text-muted: #86868b;
+            --accent: #0a84ff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: var(--bg-color);
+            background-image: radial-gradient(circle at 80% -20%, #2c2c35 0%, #000000 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-main);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Container do Slide com efeito Glassmorphism */
+        .slide-container {
+            position: relative;
+            width: 85vw;
+            height: 80vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+        }
+
+        /* Botões de janela macOS */
+        .window-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .dot.red { background-color: #ff5f56; }
+        .dot.yellow { background-color: #ffbd2e; }
+        .dot.green { background-color: #27c93f; }
+
+        /* Slides */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 60px 80px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            pointer-events: none;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        /* Tipografia */
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        p {
+            font-size: 1.5rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            max-width: 900px;
+        }
+
+        .highlight {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        ul {
+            font-size: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            padding-left: 2rem;
+        }
+
+        li span {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        /* Slide Inicial Específico */
+        .hook-text {
+            font-size: 4rem;
+            font-weight: 700;
+            text-align: center;
+            background: -webkit-linear-gradient(135deg, #fff, #86868b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+        }
+
+        .question-text {
+            font-size: 1.8rem;
+            text-align: center;
+            color: var(--accent);
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeIn 2s forwards 2s;
+        }
+
+        .answer-text {
+            font-size: 1.2rem;
+            text-align: center;
+            color: var(--text-muted);
+            opacity: 0;
+            animation: fadeIn 2s forwards 6s;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Controles de Navegação (Invisíveis, clicáveis) */
+        .nav-area {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 15%;
+            z-index: 100;
+            cursor: pointer;
+        }
+        .nav-left { left: 0; }
+        .nav-right { right: 0; }
+
+        /* Rodapé de progresso */
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: var(--accent);
+            transition: width 0.4s ease;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-area nav-left" onclick="prevSlide()"></div>
+    <div class="nav-area nav-right" onclick="nextSlide()"></div>
+
+    <div class="slide-container">
+        <div class="window-controls">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+        </div>
+
+        <div class="progress-bar" id="progress"></div>
+
+        <div class="slide active">
+            <div class="hook-text">"Para quem não sabe para onde vai, qualquer caminho serve."</div>
+            <div class="question-text">De quem é a frase?</div>
+            <div class="answer-text">(Gato de Cheshire - Alice no País das Maravilhas)</div>
+        </div>
+
+        <div class="slide">
+            <h2>O Valor dos Dados</h2>
+            <h1>Além das Planilhas</h1>
+            <p>Até que ponto é viável gerenciar a organização através do Excel? Quando uma solução complexa se torna vital?</p>
+            <ul>
+                <li><span>O Ativo Principal:</span> O verdadeiro valor está na arquitetura dos dados, não apenas na ferramenta.</li>
+                <li><span>Dados e I.A.:</span> Sem dados limpos e estruturados, a Inteligência Artificial não possui combustível.</li>
+                <li><span>Decisão Estratégica:</span> Modelagem de dados como base para previsibilidade organizacional.</li>
+            </ul>
+        </div>
+
+        <div class="slide">
+            <h2>Segurança da Informação</h2>
+            <h1>Compliance, Ética e Privacidade</h1>
+            <p>A proteção dos ativos intelectuais e do segredo de negócio no uso de IA Generativa.</p>
+            <ul>
+                <li><span>O Risco da Exposição:</span> O recente "expose" do código e comportamento do Claude como estudo de caso.</li>
+                <li><span>Dados Sensíveis:</span> O que submetemos aos modelos (prompts) pode vazar ou treinar bases de terceiros.</li>
+                <li><span>Governança:</span> A importância de diretrizes claras sobre o uso de dados corporativos em plataformas públicas.</li>
+            </ul>
+        </div>
+
+        <div class="slide">
+            <h2>Modelos de Treinamento</h2>
+            <h1>Experiência Humana vs. IA</h1>
+            <p>A correlação entre o tempo de empresa (conhecimento empírico) e o treinamento de modelos preditivos.</p>
+            <ul>
+                <li><span>Sazonalidade e Previsão:</span> Identificação rápida de padrões (Ex: surtos de Dengue vs. casos de Covid na gestão hospitalar).</li>
+                <li><span>Intuição vs. Estatística:</span> O profissional experiente reconhece os sinais; a I.A. treinada mapeia as correlações com velocidade e escala.</li>
+                <li><span>Compartilhamento:</span> Como extrair esse conhecimento do colaborador para os dados (preservando a privacidade).</li>
+            </ul>
+        </div>
+
+        <div class="slide">
+            <h2>Trilha das Próximas Aulas</h2>
+            <h1>Storytelling e Aplicação Prática</h1>
+            <p>Transformando dados brutos em narrativas (Storytelling) e aprendizado contínuo através da Inteligência Artificial.</p>
+            <ul>
+                <li><span>Semana Seguinte:</span> Engenharia de Prompts - Como guiar a I.A. para extrair o real valor dos dados.</li>
+                <li><span>Casos de Uso Avançados:</span> Análise de sentimento utilizando automação (Gmail + Google Vertex AI).</li>
+                <li><span>Laboratório:</span> Desenvolvimento prático baseado no desempenho da turma.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progress');
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                }
+            });
+            // Atualiza a barra de progresso
+            const progressPercentage = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = progressPercentage + '%';
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        // Navegação pelo teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Inicializa o progresso
+        updateSlide();
+    </script>
+</body>
+</html>
